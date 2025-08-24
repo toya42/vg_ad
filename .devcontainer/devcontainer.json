@@ -1,10 +1,8 @@
 {
   "name": "vg_ad",
-  "build": {
-    "dockerfile": "../Dockerfile",
-    "context": ".."
-  },
-  "workspaceFolder": "/workspace/vg_ad",
+  "image": "rocker/verse:4.4.1",
+  "workspaceFolder": "/workspaces/vg_ad",
+  "postCreateCommand": "R -q -e \"if (!requireNamespace('renv', quietly=TRUE)) install.packages('renv'); renv::restore(prompt=FALSE)\"",
   "customizations": {
     "vscode": {
       "extensions": [
