@@ -9,15 +9,15 @@ decide_today <- function(metrics_today, thresholds, cfg, context_info=list()) {
     if (grepl("flag", nm)) {
       if (val > 0) {
         if (level != "alert") level <- "attention"
-        reasons <- c(reasons, paste0(prefix, nm))
+        reasons <- c(reasons, sprintf("%s%s=%g", prefix, nm, val))
       }
     } else if (!is.null(thr)) {
       if (!is.null(thr$alert) && !is.na(thr$alert) && val >= thr$alert) {
         level <- "alert"
-        reasons <- c(reasons, paste0(prefix, nm, ">=alert"))
+        reasons <- c(reasons, sprintf("%s%s=%g >= alert(%g)", prefix, nm, val, thr$alert))
       } else if (!is.null(thr$attention) && !is.na(thr$attention) && val >= thr$attention && level != "alert") {
         level <- "attention"
-        reasons <- c(reasons, paste0(prefix, nm, ">=attention"))
+        reasons <- c(reasons, sprintf("%s%s=%g >= attention(%g)", prefix, nm, val, thr$attention))
       }
     }
   }

@@ -1,3 +1,6 @@
+# Threshold estimation for each metric based on reference distributions.
+# Note: z-score thresholds for FPCA scores are provided separately via
+# cfg$decision$attention_sigma and cfg$decision$alert_sigma.
 fit_thresholds <- function(metric_values_ref, cfg) {
   res <- list()
   if (nrow(metric_values_ref) == 0) return(res)

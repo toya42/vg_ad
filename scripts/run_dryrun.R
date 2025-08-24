@@ -45,53 +45,70 @@ prep_today <- preprocess_day(raw_today, cfg)
 Y_today <- prep_today$vec
 
 days_list <- build_reference_days(target_date, cfg)
-all_ref <- list()
+ref_data <- list()
+counts <- list()
 for (nm in names(days_list)) {
-  vecs <- list()
+  kept <- 0; dropped <- 0; vecs <- list()
   for (d in days_list[[nm]]) {
     raw <- fetch_day(sensor_id, d, cfg)
     if (is.null(raw)) next
     prep <- preprocess_day(raw, cfg)
     if (is.null(prep)) next
+    if (prep$meta$missing_ratio > cfg$preprocess$max_missing_ratio) {
+      dropped <- dropped + 1
+      next
+    }
+    kept <- kept + 1
     vecs[[length(vecs)+1]] <- prep$vec
   }
-  if (length(vecs)>0) {
-    all_ref[[nm]] <- do.call(rbind, vecs)
-  }
-}
-Y_ref_all <- if (length(all_ref)>0) do.call(rbind, all_ref) else matrix(nrow=0, ncol=length(Y_today))
-
-fpca_fit <- fit_fpca(Y_ref_all, prep_today$t_grid, cfg)
-if (!is.null(fpca_fit)) message("使用PC数 = ", fpca_fit$pcnum, " | 累積寄与率 = ", round(fpca_fit$cumvar_used*100,1), "%")
-
-scores_ref_all <- if (!is.null(fpca_fit) && nrow(Y_ref_all)>0) project_fpca_scores(Y_ref_all, fpca_fit) else matrix(nrow=nrow(Y_ref_all), ncol=0)
-scores_today <- if (!is.null(fpca_fit)) project_fpca_scores(matrix(Y_today, nrow=1), fpca_fit) else matrix(nrow=1,ncol=0)
-recon_today <- if (!is.null(fpca_fit)) reconstruct_from_fpca(scores_today, fpca_fit)[1,] else rep(NA, length(Y_today))
-
-metrics_all <- compute_metrics(Y_ref_all, Y_today, scores_ref_all, scores_today, recon_today, fpca_fit, cfg)
-metrics_today <- metrics_all$today
-
-metrics_ref_list <- list()
-for (nm in names(all_ref)) {
-  Y_ref_mat <- all_ref[[nm]]
-  scores_ref_w <- if (!is.null(fpca_fit) && nrow(Y_ref_mat)>0) project_fpca_scores(Y_ref_mat, fpca_fit) else matrix(nrow=nrow(Y_ref_mat), ncol=0)
-  metrics_w <- compute_metrics(Y_ref_mat, Y_today, scores_ref_w, scores_today, recon_today, fpca_fit, cfg)
-  metrics_ref_list[[nm]] <- metrics_w$ref
+  message(nm, ": kept=", kept, ", dropped=", dropped)
+  counts[[nm]] <- list(kept=kept, dropped=dropped)
+  if (kept > 0) ref_data[[nm]] <- do.call(rbind, vecs)
 }
 
-thresholds_list <- lapply(metrics_ref_list, fit_thresholds, cfg = cfg)
-for (nm in names(thresholds_list)) {
-  thresholds_list[[nm]]$fpca_scores_topk_z <- list(attention = cfg$decision$attention_sigma, alert = cfg$decision$alert_sigma)
-}
-if (length(thresholds_list) == 0) {
-  thresholds_list[["default"]] <- list(fpca_scores_topk_z = list(attention = cfg$decision$attention_sigma, alert = cfg$decision$alert_sigma))
-}
-
+metrics_today_list <- list()
+thresholds_list <- list()
 decisions <- list()
-for (nm in names(thresholds_list)) {
-  dec <- decide_today(metrics_today, thresholds_list[[nm]], cfg, context_info=list(window=nm))
-  decisions[[nm]] <- dec
+
+if (cfg$model$per_window) {
+  for (nm in names(days_list)) {
+    Y_ref_mat <- ref_data[[nm]]
+    if (!is.null(Y_ref_mat)) {
+      fpca_fit_w <- fit_fpca(Y_ref_mat, prep_today$t_grid, cfg)
+      if (!is.null(fpca_fit_w)) message(nm, ": 使用PC数 = ", fpca_fit_w$pcnum, " | 累積寄与率 = ", round(fpca_fit_w$cumvar_used*100,1), "%")
+      scores_ref <- if (!is.null(fpca_fit_w)) project_fpca_scores(Y_ref_mat, fpca_fit_w) else matrix(nrow=nrow(Y_ref_mat), ncol=0)
+      scores_today <- if (!is.null(fpca_fit_w)) project_fpca_scores(matrix(Y_today, nrow=1), fpca_fit_w) else matrix(nrow=1, ncol=0)
+      recon_today <- if (!is.null(fpca_fit_w)) reconstruct_from_fpca(scores_today, fpca_fit_w)[1,] else rep(NA, length(Y_today))
+      metrics <- compute_metrics(Y_ref_mat, Y_today, scores_ref, scores_today, recon_today, fpca_fit_w, cfg)
+      metrics_today_list[[nm]] <- metrics$today
+      thr <- fit_thresholds(metrics$ref, cfg)
+      thr$fpca_scores_topk_z <- list(attention = cfg$decision$attention_sigma, alert = cfg$decision$alert_sigma)
+      thresholds_list[[nm]] <- thr
+      dec <- decide_today(metrics$today, thr, cfg, context_info=list(window=nm))
+      decisions[[nm]] <- dec
+      if (!is.null(fpca_fit_w)) saveRDS(fpca_fit_w, file.path(cfg$runtime$output_dir, paste0("fpca_model_", nm, ".rds")))
+    }
+  }
+} else {
+  Y_ref_all <- if (length(ref_data)>0) do.call(rbind, ref_data) else matrix(nrow=0, ncol=length(Y_today))
+  fpca_fit <- fit_fpca(Y_ref_all, prep_today$t_grid, cfg)
+  if (!is.null(fpca_fit)) message("global: 使用PC数 = ", fpca_fit$pcnum, " | 累積寄与率 = ", round(fpca_fit$cumvar_used*100,1), "%")
+  scores_today <- if (!is.null(fpca_fit)) project_fpca_scores(matrix(Y_today, nrow=1), fpca_fit) else matrix(nrow=1, ncol=0)
+  recon_today <- if (!is.null(fpca_fit)) reconstruct_from_fpca(scores_today, fpca_fit)[1,] else rep(NA, length(Y_today))
+  for (nm in names(days_list)) {
+    Y_ref_mat <- ref_data[[nm]]
+    scores_ref <- if (!is.null(fpca_fit) && !is.null(Y_ref_mat)) project_fpca_scores(Y_ref_mat, fpca_fit) else matrix(nrow=ifelse(is.null(Y_ref_mat),0,nrow(Y_ref_mat)), ncol=0)
+    metrics <- compute_metrics(if (is.null(Y_ref_mat)) matrix(nrow=0, ncol=length(Y_today)) else Y_ref_mat, Y_today, scores_ref, scores_today, recon_today, fpca_fit, cfg)
+    metrics_today_list[[nm]] <- metrics$today
+    thr <- fit_thresholds(metrics$ref, cfg)
+    thr$fpca_scores_topk_z <- list(attention = cfg$decision$attention_sigma, alert = cfg$decision$alert_sigma)
+    thresholds_list[[nm]] <- thr
+    dec <- decide_today(metrics$today, thr, cfg, context_info=list(window=nm))
+    decisions[[nm]] <- dec
+  }
+  if (!is.null(fpca_fit)) saveRDS(fpca_fit, file.path(cfg$runtime$output_dir, "fpca_model.rds"))
 }
+
 final_level <- "ok"
 reasons <- c()
 for (nm in names(decisions)) {
@@ -105,7 +122,11 @@ for (nm in names(decisions)) {
 }
 decision_final <- list(level = final_level, reasons = reasons)
 
-write_csv(as.data.frame(t(metrics_today)), file.path(cfg$runtime$output_dir, "metrics_today.csv"))
+met_df <- tibble()
+for (nm in names(metrics_today_list)) {
+  met_df <- bind_rows(met_df, as_tibble(metrics_today_list[[nm]]) %>% mutate(window=nm, .before=1))
+}
+write_csv(met_df, file.path(cfg$runtime$output_dir, "metrics_today.csv"))
 
 th_df <- tibble()
 for (nm in names(thresholds_list)) {
@@ -117,7 +138,6 @@ for (nm in names(thresholds_list)) {
 write_csv(th_df, file.path(cfg$runtime$output_dir, "thresholds.csv"))
 
 write_csv(tibble(level=decision_final$level, reason=paste(decision_final$reasons, collapse=";")), file.path(cfg$runtime$output_dir, "decision.csv"))
-if (!is.null(fpca_fit)) saveRDS(fpca_fit, file.path(cfg$runtime$output_dir, "fpca_model.rds"))
 
-print(metrics_today)
+print(met_df)
 print(decision_final)

@@ -2,9 +2,12 @@ compute_metrics <- function(Y_ref, Y_today, scores_ref, scores_today, recon_toda
   metrics_today <- list()
   if (cfg$metrics$fpca_scores$use) {
     if (!is.null(scores_ref) && nrow(scores_ref) > 1 && ncol(scores_today) > 0) {
-      mu <- apply(scores_ref[,1:min(ncol(scores_ref), cfg$metrics$fpca_scores$top_k), drop=FALSE], 2, mean)
-      sdv <- apply(scores_ref[,1:min(ncol(scores_ref), cfg$metrics$fpca_scores$top_k), drop=FALSE], 2, sd)
-      z <- abs((scores_today[1:length(mu)] - mu) / sdv)
+      k <- min(ncol(scores_ref), cfg$metrics$fpca_scores$top_k, ncol(scores_today))
+      mu <- apply(scores_ref[,1:k, drop=FALSE], 2, mean)
+      sdv <- apply(scores_ref[,1:k, drop=FALSE], 2, sd)
+      z <- rep(0, length(mu))
+      idx <- sdv > 0
+      z[idx] <- abs((scores_today[1:k][idx] - mu[idx]) / sdv[idx])
       metrics_today$fpca_scores_topk_z <- max(z)
     } else {
       metrics_today$fpca_scores_topk_z <- NA
@@ -17,13 +20,15 @@ compute_metrics <- function(Y_ref, Y_today, scores_ref, scores_today, recon_toda
     metrics_today$level_median <- stats::median(Y_today, na.rm = TRUE)
   }
   if (cfg$metrics$slope_linear$use) {
-    metrics_today$slope_linear <- coef(stats::lm(Y_today ~ seq_along(Y_today)))[2]
+    x <- seq_along(Y_today) * cfg$preprocess$resample$dt_sec / 3600
+    metrics_today$slope_linear <- coef(stats::lm(Y_today ~ x))[2]
   }
   if (cfg$metrics$variability_iqr$use) {
     metrics_today$variability_iqr <- stats::IQR(Y_today, na.rm = TRUE)
   }
   if (cfg$metrics$quietness_flag$use) {
-    metrics_today$quietness_flag <- as.integer(metrics_today$variability_iqr < 0.01)
+    thr <- cfg$metrics$quietness_flag$threshold_iqr
+    metrics_today$quietness_flag <- as.integer(metrics_today$variability_iqr < thr)
   }
   if (cfg$metrics$high_pressure_flag$use) {
     thr <- cfg$metrics$high_pressure_flag$threshold_logpa
@@ -44,7 +49,10 @@ compute_metrics <- function(Y_ref, Y_today, scores_ref, scores_today, recon_toda
       row <- list()
       if ("recon_mse" %in% metrics_to_compute) row$recon_mse <- mean((y - rec)^2, na.rm=TRUE)
       if ("level_median" %in% metrics_to_compute) row$level_median <- stats::median(y, na.rm=TRUE)
-      if ("slope_linear" %in% metrics_to_compute) row$slope_linear <- coef(stats::lm(y ~ seq_along(y)))[2]
+      if ("slope_linear" %in% metrics_to_compute) {
+        xh <- seq_along(y) * cfg$preprocess$resample$dt_sec / 3600
+        row$slope_linear <- coef(stats::lm(y ~ xh))[2]
+      }
       if ("variability_iqr" %in% metrics_to_compute) row$variability_iqr <- stats::IQR(y, na.rm=TRUE)
       metrics_ref <- rbind(metrics_ref, as.data.frame(row))
     }

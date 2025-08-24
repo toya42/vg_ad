@@ -12,8 +12,14 @@ fit_fpca <- function(Y_mat, t_grid, cfg) {
     list(model = pc, pcnum = K, cumvar_used = cum[K], center = pc$center, phi = pc$rotation[,1:K], t_grid = t_grid)
   } else {
     fit <- refund::fpca.sc(Y_mat, pve = cfg$model$fpca$cumvar_min)
-    K <- max(cfg$model$fpca$min_pc, ncol(fit$efunctions))
-    list(model = fit, pcnum = K, cumvar_used = fit$varprop[K], center = fit$mu, phi = fit$efunctions[,1:K], t_grid = t_grid)
+    K_pve <- ncol(fit$efunctions)
+    if (is.null(K_pve) || K_pve == 0) {
+      warning("fpca.sc returned no components")
+      return(NULL)
+    }
+    K <- K_pve
+    cumvar_used <- sum(fit$varprop[1:K])
+    list(model = fit, pcnum = K, cumvar_used = cumvar_used, center = fit$mu, phi = fit$efunctions[,1:K], t_grid = t_grid)
   }
 }
 
