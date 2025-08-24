@@ -14,6 +14,6 @@
     "refund": { "Package": "refund", "Version": "0.1-28", "Source": "CRAN" },
     "pkgdown": { "Package": "pkgdown", "Version": "2.0.7", "Source": "CRAN" },
     "devtools": { "Package": "devtools", "Version": "2.4.5", "Source": "CRAN" },
-    "quarto": { "Package": "quarto", "Version": "1.4.0", "Source": "CRAN" }
+    "quarto": { "Package": "quarto", "Version": "1.5.0", "Source": "CRAN" }
   }
 }
