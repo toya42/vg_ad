@@ -1,0 +1,70 @@
+runtime:
+  timezone: "Asia/Tokyo"
+  output_dir: "./out"
+  log_dir: "./logs"
+
+data_source:
+  type: "csv"
+  csv:
+    root: "./data"
+
+preprocess:
+  epsilon: 1e-12
+  log_base: 10
+  resample:
+    dt_sec: 3
+    method: "linear"
+  clip_log:
+    min: -12
+    max: 6
+  window_utc: ["22:00:00", "02:00:00"]
+  max_missing_ratio: 0.2
+
+reference_windows:
+  - name: "recent_1m"
+    type: "rolling"
+    lookback_days: 30
+  - name: "lagged_2to6w"
+    type: "relative_range"
+    start_days_ago: 42
+    end_days_ago: 14
+
+model:
+  type: "fpca"
+  per_window: true
+  fpca:
+    cumvar_min: 0.98
+    min_pc: 2
+
+metrics:
+  fpca_scores:
+    use: true
+    top_k: 3
+    method: "z"
+  recon_mse:
+    use: true
+  level_median:
+    use: true
+  slope_linear:
+    use: true
+  variability_iqr:
+    use: true
+  quietness_flag:
+    use: true
+    threshold_iqr: 0.01
+  high_pressure_flag:
+    use: true
+    threshold_logpa: 0
+
+thresholds:
+  scheme: "gaussian_3sigma"
+  per_window: true
+  min_samples: 15
+  fallback_scheme: "quantile"
+  quantile_p: 0.997
+
+decision:
+  rule: "OR"
+  # z-score thresholds for FPCA scores use these sigmas
+  attention_sigma: 2.5
+  alert_sigma: 3.0
