@@ -2,7 +2,7 @@
   "name": "vg_ad",
   "image": "rocker/verse:4.4.1",
   "workspaceFolder": "/workspaces/vg_ad",
-  "postCreateCommand": "R -q -e \"if (!requireNamespace('renv', quietly=TRUE)) install.packages('renv'); renv::restore(prompt=FALSE)\"",
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
   "customizations": {
     "vscode": {
       "extensions": [
