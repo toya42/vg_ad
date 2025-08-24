@@ -1,0 +1,41 @@
+---
+title: "VG-AD: Nightly Anomaly Detection Overview"
+format:
+  html:
+    toc: true
+    code-fold: show
+vignette: >
+  %\VignetteIndexEntry{Overview}
+  %\VignetteEngine{quarto}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Data flow
+
+This vignette outlines the nightly pipeline for vacuum gauge anomaly detection.
+
+```{r}
+#| eval: false
+# Example: read a small CSV and run through core pipeline functions
+```
+
+# FPCA
+
+Functional principal components analysis (FPCA) models typical behavior and
+captures dominant modes of variation.
+
+# Metrics
+
+Classic metrics such as median level, slope, and variability complement FPCA.
+
+# Thresholds
+
+Reference day distributions yield attention and alert thresholds.
+
+# Example plot
+
+```{r}
+#| eval: false
+# library(ggplot2)
+# ggplot(example_df, aes(datetime, value)) + geom_line()
+```

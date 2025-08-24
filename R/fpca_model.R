@@ -1,3 +1,13 @@
+#' Fit FPCA model
+#'
+#' @description Perform functional principal components analysis on reference matrix.
+#' @param Y_mat Matrix. Rows are days, columns are time points.
+#' @param t_grid POSIXct vector for time grid.
+#' @param cfg List. Parsed config.
+#' @return List containing model object, number of PCs used, and basis info.
+#' @export
+#' @examples
+#' \dontrun{fit_fpca(Y_mat, t_grid, cfg)}
 fit_fpca <- function(Y_mat, t_grid, cfg) {
   if (nrow(Y_mat) < 2) {
     warning("not enough reference days for FPCA")
@@ -23,6 +33,15 @@ fit_fpca <- function(Y_mat, t_grid, cfg) {
   }
 }
 
+#' Project data into FPCA scores
+#'
+#' @description Project new curves into fitted FPCA basis.
+#' @param Y_mat_new Matrix with rows as new observations.
+#' @param fpca_fit List returned by [fit_fpca()].
+#' @return Matrix of FPCA scores.
+#' @export
+#' @examples
+#' \dontrun{project_fpca_scores(Y_new, fpca_fit)}
 project_fpca_scores <- function(Y_mat_new, fpca_fit) {
   if (is.null(fpca_fit)) return(matrix(NA, nrow = nrow(Y_mat_new), ncol = 0))
   phi <- fpca_fit$phi
@@ -30,6 +49,15 @@ project_fpca_scores <- function(Y_mat_new, fpca_fit) {
   scale(Y_mat_new, center = center, scale = FALSE) %*% phi
 }
 
+#' Reconstruct curves from FPCA scores
+#'
+#' @description Rebuild approximated curves from FPCA scores.
+#' @param scores Matrix of FPCA scores.
+#' @param fpca_fit List returned by [fit_fpca()].
+#' @return Matrix of reconstructed curves.
+#' @export
+#' @examples
+#' \dontrun{reconstruct_from_fpca(scores, fpca_fit)}
 reconstruct_from_fpca <- function(scores, fpca_fit) {
   if (is.null(fpca_fit)) return(matrix(NA, nrow = nrow(scores), ncol = 0))
   center <- fpca_fit$center

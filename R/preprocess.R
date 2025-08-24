@@ -1,3 +1,12 @@
+#' Preprocess a day's sensor data
+#'
+#' @description Clean, log-transform, and resample a day's worth of data.
+#' @param df_day Tibble. Output of [fetch_day()].
+#' @param cfg List. Parsed config.
+#' @return List with `vec` numeric vector, `meta` list, and `t_grid` POSIXct grid.
+#' @export
+#' @examples
+#' \dontrun{preprocess_day(df_day, cfg)}
 preprocess_day <- function(df_day, cfg) {
   stopifnot(!is.null(df_day))
   eps <- as.numeric(cfg$preprocess$epsilon)

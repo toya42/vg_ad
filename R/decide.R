@@ -1,3 +1,14 @@
+#' Decide anomaly level
+#'
+#' @description Compare today's metrics against thresholds to produce decision level.
+#' @param metrics_today Named list of today's metrics.
+#' @param thresholds Named list from [fit_thresholds()].
+#' @param cfg List. Parsed config.
+#' @param context_info List. Optional contextual information.
+#' @return List with `level` and `reasons`.
+#' @export
+#' @examples
+#' \dontrun{decide_today(metrics_today, thresholds, cfg)}
 decide_today <- function(metrics_today, thresholds, cfg, context_info=list()) {
   reasons <- c()
   level <- "ok"

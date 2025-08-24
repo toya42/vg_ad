@@ -1,3 +1,17 @@
+#' Compute metrics for anomaly detection
+#'
+#' @description Calculate FPCA-based and classic metrics for today and reference days.
+#' @param Y_ref Matrix of reference day curves.
+#' @param Y_today Numeric vector for today's curve.
+#' @param scores_ref Matrix of FPCA scores for reference days.
+#' @param scores_today Matrix of FPCA scores for today.
+#' @param recon_today Matrix of reconstructed curves for today.
+#' @param fpca_fit List returned by [fit_fpca()].
+#' @param cfg List. Parsed config.
+#' @return List with `today` (named list) and `ref` (data frame) metrics.
+#' @export
+#' @examples
+#' \dontrun{compute_metrics(Y_ref, Y_today, S_ref, S_today, recon, fpca_fit, cfg)}
 compute_metrics <- function(Y_ref, Y_today, scores_ref, scores_today, recon_today, fpca_fit, cfg) {
   metrics_today <- list()
   if (cfg$metrics$fpca_scores$use) {
