@@ -65,6 +65,5 @@ thresholds:
 
 decision:
   rule: "OR"
-  # z-score thresholds for FPCA scores use these sigmas
   attention_sigma: 2.5
   alert_sigma: 3.0
