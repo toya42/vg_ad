@@ -1,13 +1,44 @@
 Package: vgAd
+Type: Package
 Title: Vacuum Gauge Nightly Anomaly Detection
 Version: 0.0.1
-Authors@R: c(person("Your", "Name", email="you@example.com", role=c("aut","cre")))
+Authors@R:
+    c(person(given = "Toya", family = "Surname", role = c("aut", "cre"),
+             email = "your_email@example.com"))
+Author: Toya Surname [aut, cre]
+Maintainer: Toya Surname <your_email@example.com>
 Description: FPCA-based nightly anomaly detection for vacuum sensors, plus classic metrics.
 License: MIT + file LICENSE
+URL: https://github.com/toya42/vg_ad
+BugReports: https://github.com/toya42/vg_ad/issues
+Depends:
+    R (>= 4.1)
+Imports:
+    dplyr,
+    tidyr,
+    readr,
+    purrr,
+    tibble,
+    stringr,
+    ggplot2,
+    lubridate,
+    zoo,
+    yaml,
+    stats,
+    utils
+Suggests:
+    quarto,
+    pkgdown,
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0),
+    fdapace,
+    roahd,
+    fdaoutlier,
+    covr
+VignetteBuilder: quarto
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
-Depends: R (>= 4.2)
-Imports: tidyverse, lubridate, zoo, yaml, refund
-Suggests: fdapace, roahd, fdaoutlier, covr, knitr, rmarkdown, quarto
-VignetteBuilder: quarto
+Config/testthat/edition: 3
+Config/Needs/website: pkgdown, quarto

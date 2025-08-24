@@ -1,0 +1,10 @@
+---
+title: "Introduction to vgAd"
+format: html
+engine: knitr
+---
+
+```{r}
+#| echo: false
+sessionInfo()
+```

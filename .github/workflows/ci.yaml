@@ -1,0 +1,49 @@
+name: R-CMD-check
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  R-CMD-check:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      # Optional safety valve; remove later if not needed:
+      _R_CHECK_FORCE_SUGGESTS_: 'false'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: '4.4.1'
+          use-public-rspm: true
+
+      - name: Setup Quarto
+        uses: r-lib/actions/setup-quarto@v2
+
+      - name: Install deps (pak)
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          # Install the package, rcmdcheck, and Quarto R package so VignetteBuilder: quarto works
+          extra-packages: |
+            any::rcmdcheck
+            any::quarto
+            local::.
+          needs: check
+
+      # --- Guard: Assert Quarto is installed and visible from R ---
+      - name: Quarto info
+        run: Rscript -e 'cat("Quarto path: ", quarto::quarto_path(), "\nVersion: ", as.character(utils::packageVersion("quarto")), "\n")'
+
+      # --- Guard: Print session info to aid debugging ---
+      - name: Session info
+        run: sessionInfo()
+        shell: Rscript {0}
+
+      - name: Check
+        uses: r-lib/actions/check-r-package@v2
+        with:
+          args: 'c("--no-manual")'
