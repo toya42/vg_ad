@@ -1,18 +1,11 @@
-url: https://<your-org>.github.io/<repo>
+url: https://toya42.github.io/vg_ad
 template:
   bootstrap: 5
 navbar:
   structure:
-    left: [reference, articles]
-reference:
-  - title: "Core Pipeline"
-    contents:
-      - fetch_day
-      - preprocess_day
-      - build_reference_days
-      - fit_fpca
-      - project_fpca_scores
-      - reconstruct_from_fpca
-      - compute_metrics
-      - fit_thresholds
-      - decide_today
+    left: [reference, articles, news]
+    right: [search, github]
+  components:
+    github:
+      icon: fa-github
+      href: https://github.com/toya42/vg_ad

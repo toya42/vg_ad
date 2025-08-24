@@ -1,0 +1,9 @@
+^_pkgdown\.yml$
+^docs$
+^\.github$
+^vignettes/.+\.html$
+^\.Rproj\.user$
+^.*\.Rproj$
+^\.Rprofile$
+^renv$
+^renv\.lock$
