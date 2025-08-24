@@ -1,3 +1,9 @@
+#' Load configuration file
+#'
+#' @description Read YAML configuration and ensure required directories exist.
+#' @param path Character. Path to YAML config.
+#' @return List configuration object.
+#' @keywords internal
 load_config <- function(path = "config.yaml") {
   stopifnot(requireNamespace("yaml", quietly = TRUE))
   cfg <- yaml::read_yaml(path)

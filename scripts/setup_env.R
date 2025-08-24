@@ -15,7 +15,11 @@ if (!file.exists("renv.lock")) {
     "fdapace",
     "roahd",
     "fdaoutlier",
-    "future.apply"
+    "future.apply",
+    "roxygen2",
+    "pkgdown",
+    "devtools",
+    "quarto"
   )
   install.packages(pkgs, repos = "https://cloud.r-project.org")
   renv::snapshot(prompt = FALSE)

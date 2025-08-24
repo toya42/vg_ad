@@ -1,0 +1,13 @@
+Package: vgAd
+Title: Vacuum Gauge Nightly Anomaly Detection
+Version: 0.0.1
+Authors@R: c(person("Your", "Name", email="you@example.com", role=c("aut","cre")))
+Description: FPCA-based nightly anomaly detection for vacuum sensors, plus classic metrics.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.2)
+Imports: tidyverse, lubridate, zoo, yaml, refund
+Suggests: fdapace, roahd, fdaoutlier, covr, knitr, rmarkdown, quarto
+VignetteBuilder: quarto

@@ -1,3 +1,13 @@
+#' Fetch 1-day sensor data
+#'
+#' @description Retrieve raw measurements for a given sensor and date.
+#' @param sensor_id Character. Sensor identifier (e.g., "VG09").
+#' @param date Date. Target local date.
+#' @param cfg List. Parsed config.
+#' @return A tibble with columns `datetime` (POSIXct, local tz) and `value` (numeric).
+#' @export
+#' @examples
+#' \dontrun{fetch_day("VG09", as.Date("2025-08-10"), cfg)}
 fetch_day <- function(sensor_id, date, cfg) {
   stopifnot(requireNamespace("readr", quietly = TRUE))
   tz <- cfg$runtime$timezone
