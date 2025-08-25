@@ -36,8 +36,13 @@ jobs:
 
       # --- Guard: Assert Quarto is installed and visible from R ---
       - name: Quarto info
-        run: Rscript -e 'cat("Quarto path: ", quarto::quarto_path(), "\nVersion: ", as.character(utils::packageVersion("quarto")), "\n")'
-
+        shell: Rscript {0}
+        run: |
+          cat(
+            "Quarto path: ", quarto::quarto_path(),
+            "\nVersion: ", as.character(utils::packageVersion("quarto")),
+            "\n"
+          )      
       # --- Guard: Print session info to aid debugging ---
       - name: Session info
         run: sessionInfo()

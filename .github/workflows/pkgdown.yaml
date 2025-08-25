@@ -40,11 +40,19 @@ jobs:
 
       # --- Guard: print Quarto path and version ---
       - name: Quarto info
-        run: Rscript -e 'cat("Quarto path: ", quarto::quarto_path(), "\nVersion: ", as.character(utils::packageVersion("quarto")), "\n")'
+        shell: Rscript {0}
+        run: |
+          cat(
+            "Quarto path: ", quarto::quarto_path(),
+            "\nVersion: ", as.character(utils::packageVersion("quarto")),
+            "\n"
+          )
 
       # --- Guard: print pkgdown version ---
       - name: pkgdown version
-        run: Rscript -e 'cat("pkgdown: ", as.character(utils::packageVersion("pkgdown")), "\n")'
+        shell: Rscript {0}
+        run: |
+          cat("pkgdown: ", as.character(utils::packageVersion("pkgdown")), "\n")
 
       # Optional: capture session info
       - name: Session info
