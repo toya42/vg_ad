@@ -40,15 +40,19 @@ read_input_csv <- function(path, tz = "UTC") {
   # Normalize BOM in first column name, if present
   names(df)[1] <- sub("\ufeff", "", names(df)[1])
   if (!"Date" %in% names(df)) stop("CSV must have 'Date' column")
-  # Pick the first non-Date numeric column as value
+
   val_cols <- setdiff(names(df), "Date")
   if (length(val_cols) == 0) stop("No value column found")
   value_col <- val_cols[1]
-  df$Date <- as.POSIXct(df$Date, format = "%Y-%m-%d %H:%M:%S", tz = tz)
-  if (anyNA(df$Date)) {
-    # Retry with flexible parsing if needed
-    df$Date <- as.POSIXct(df$Date, tz = tz)
-  }
+
+  df$Date <- as.POSIXct(
+    df$Date, tz = tz,
+    tryFormats = c(
+      "%Y-%m-%d %H:%M:%OS", "%Y/%m/%d %H:%M:%OS",
+      "%m/%d/%Y %H:%M:%OS", "%Y-%m-%dT%H:%M:%OS",
+      "%Y-%m-%d %H:%M",     "%Y/%m/%d %H:%M"
+    )
+  )
   df <- df[order(df$Date), ]
   list(df = df[, c("Date", value_col)], value_col = value_col)
 }
