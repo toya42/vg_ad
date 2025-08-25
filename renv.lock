@@ -10,7 +10,7 @@
     "readr": { "Package": "readr", "Version": "2.1.5", "Source": "CRAN" },
     "tibble": { "Package": "tibble", "Version": "3.2.1", "Source": "CRAN" },
     "lubridate": { "Package": "lubridate", "Version": "1.9.3", "Source": "CRAN" },
-    "yaml": { "Package": "yaml", "Version": "2.3.7", "Source": "CRAN" },
+    "yaml": { "Package": "yaml", "Version": "2.3.10", "Source": "CRAN" },
     "refund": { "Package": "refund", "Version": "0.1-28", "Source": "CRAN" },
     "pkgdown": { "Package": "pkgdown", "Version": "2.0.7", "Source": "CRAN" },
     "devtools": { "Package": "devtools", "Version": "2.4.5", "Source": "CRAN" },
