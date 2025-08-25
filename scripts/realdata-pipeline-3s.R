@@ -388,16 +388,25 @@ if (export_csv) {
 }
 
 if (export_plots) {
-  # Quick-look overlay plot (base graphics)
   png(file.path(opt$`out-dir`, sprintf("plot-today-vs-recon-%s.png", as.character(today))),
       width = 1200, height = 500)
-  par(mar=c(4,4,1,1))
-  x <- seq_along(recon_today)
-  plot(x, as.numeric(Y_today_use[1, ]), type="l", xlab="grid index (FPCA view)",
-       ylab="value")
-  lines(x, as.numeric(recon_today))
-  legend("topleft", col=c("black","black"), lty=c(1,1),
-         legend=c("today (FPCA view)","reconstruction"), bty="n")
+  par(mar = c(4, 4, 1, 1))
+
+  x <- seq_len(ncol(Y_today_use))
+  y_today <- as.numeric(Y_today_use[1, ])
+  y_recon <- as.numeric(recon_today)
+
+  # 1) use combined range so the red line won't get clipped
+  rng <- range(c(y_today, y_recon), na.rm = TRUE)
+
+  # 2) be explicit about colors + (optionally) line width
+  plot(x, y_today, type = "l", xlab = "grid index (FPCA view)",
+       ylab = "value", ylim = rng, col = "black", lwd = 1.3)
+  lines(x, y_recon, col = "red", lwd = 1.3)
+
+  legend("topleft",
+         legend = c("today (FPCA view)", "reconstruction"),
+         col = c("black", "red"), lty = 1, lwd = 1.3, bty = "n")
   dev.off()
 }
 
