@@ -9,3 +9,4 @@ renv/library
 .Rproj.user
 *.tar.gz
 *.Rd
+log

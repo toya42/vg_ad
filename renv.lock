@@ -393,6 +393,17 @@
       ],
       "Hash": "d91263322a58af798f6cf3b13fd56dde"
     },
+    "data.table": {
+      "Package": "data.table",
+      "Version": "1.16.2",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "R",
+        "methods"
+      ],
+      "Hash": "2e00b378fc3be69c865120d9f313039a"
+    },
     "deSolve": {
       "Package": "deSolve",
       "Version": "1.40",
@@ -657,6 +668,16 @@
         "zip"
       ],
       "Hash": "ae855ad6d7be20dd7b05d43d25700398"
+    },
+    "getopt": {
+      "Package": "getopt",
+      "Version": "1.20.4",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "stats"
+      ],
+      "Hash": "ed33b16c6d24f7ced1d68877ac2509ee"
     },
     "ggplot2": {
       "Package": "ggplot2",
@@ -1036,6 +1057,21 @@
       ],
       "Hash": "637ceb7665637edce9289dd763972704"
     },
+    "lobstr": {
+      "Package": "lobstr",
+      "Version": "1.1.2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "cpp11",
+        "crayon",
+        "methods",
+        "prettyunits",
+        "rlang"
+      ],
+      "Hash": "f2a94f8fc9db382a642e965339635ad6"
+    },
     "locfit": {
       "Package": "locfit",
       "Version": "1.5-9.12",
@@ -1219,6 +1255,18 @@
       ],
       "Hash": "d413e0fef796c9401a4419485f709ca1"
     },
+    "optparse": {
+      "Package": "optparse",
+      "Version": "1.7.5",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "getopt",
+        "methods"
+      ],
+      "Hash": "ce5f8381cd2c38d1fc14c83d8b21efd0"
+    },
     "pbs": {
       "Package": "pbs",
       "Version": "1.1",
@@ -1242,6 +1290,16 @@
         "mvtnorm"
       ],
       "Hash": "5e27d30304bd76dc55a9af1ec6959168"
+    },
+    "peakRAM": {
+      "Package": "peakRAM",
+      "Version": "1.0.2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R"
+      ],
+      "Hash": "3ce98cb043968d0370d17807f4c25f0a"
     },
     "pillar": {
       "Package": "pillar",
@@ -1380,6 +1438,16 @@
         "utils"
       ],
       "Hash": "0c90a7d71988856bad2a2a45dd871bb9"
+    },
+    "profmem": {
+      "Package": "profmem",
+      "Version": "0.7.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "utils"
+      ],
+      "Hash": "54b22c8e9f78fcb89f0543f4b054f19a"
     },
     "profvis": {
       "Package": "profvis",
