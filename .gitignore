@@ -7,3 +7,5 @@ out/*
 renv/library
 .Rhistory
 .Rproj.user
+*.tar.gz
+*.Rd

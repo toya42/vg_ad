@@ -25,13 +25,14 @@ Imports:
     zoo,
     yaml,
     stats,
-    utils
+    utils,
+    refund
 Suggests:
-    quarto,
     pkgdown,
     knitr,
     rmarkdown,
     testthat (>= 3.0.0),
+    quarto,
     fdapace,
     roahd,
     fdaoutlier,
