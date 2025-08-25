@@ -2,7 +2,7 @@ name: R-CMD-check
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main, master, develop ]
   pull_request:
     branches: [ main, master ]
 
@@ -22,7 +22,7 @@ jobs:
           use-public-rspm: true
 
       - name: Setup Quarto
-        uses: r-lib/actions/setup-quarto@v2
+        uses: quarto-dev/quarto-actions/setup@v2
 
       - name: Install deps (pak)
         uses: r-lib/actions/setup-r-dependencies@v2

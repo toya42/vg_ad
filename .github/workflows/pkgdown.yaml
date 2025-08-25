@@ -27,7 +27,7 @@ jobs:
           use-public-rspm: true
 
       - name: Setup Quarto
-        uses: r-lib/actions/setup-quarto@v2
+        uses: quarto-dev/quarto-actions/setup@v2
 
       - name: Install deps (pak)
         uses: r-lib/actions/setup-r-dependencies@v2
