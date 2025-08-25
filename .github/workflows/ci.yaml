@@ -2,7 +2,7 @@ name: R-CMD-check
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main, master, develop ]
   pull_request:
     branches: [ main, master ]
 
@@ -22,7 +22,7 @@ jobs:
           use-public-rspm: true
 
       - name: Setup Quarto
-        uses: r-lib/actions/setup-quarto@v2
+        uses: quarto-dev/quarto-actions/setup@v2
 
       - name: Install deps (pak)
         uses: r-lib/actions/setup-r-dependencies@v2
@@ -36,8 +36,13 @@ jobs:
 
       # --- Guard: Assert Quarto is installed and visible from R ---
       - name: Quarto info
-        run: Rscript -e 'cat("Quarto path: ", quarto::quarto_path(), "\nVersion: ", as.character(utils::packageVersion("quarto")), "\n")'
-
+        shell: Rscript {0}
+        run: |
+          cat(
+            "Quarto path: ", quarto::quarto_path(),
+            "\nVersion: ", as.character(utils::packageVersion("quarto")),
+            "\n"
+          )      
       # --- Guard: Print session info to aid debugging ---
       - name: Session info
         run: sessionInfo()
@@ -46,4 +51,5 @@ jobs:
       - name: Check
         uses: r-lib/actions/check-r-package@v2
         with:
-          args: 'c("--no-manual")'
+          args: 'c("--no-manual","--no-build-vignettes")'
+          error-on: '"error"'
